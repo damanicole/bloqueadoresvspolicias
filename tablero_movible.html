@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+       <title>tablero de vehiculos</title>
+       <style>
+        body{
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        #almacen{
+            display: flex;
+            gap: 15px;
+            background-color: #e0f2f1;
+            padding: 15px;
+            border: 2px solid #004d40;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+
+        #almacen img{
+            width: 65px;
+            height: auto;
+            cursor: grab;
+        }
+
+        table{
+            position: relative;
+            border-collapse: collapse;
+            background-color: #bbecc5;
+            border: 3px solid #333;
+         }
+
+         td{
+            width: 60px;
+            height: 60px;
+            border:1px solid rgba(0, 0, 0, 0.25);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th{
+            width: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            color: #333;
+        }
+
+        table img{
+            filter: drop-shadow(4px 6px 4px rgba(0,0,0,0.4));
+            transition: transform 0.2s ease;
+        }
+
+        table img:hover{
+            cursor: grab;
+            transform: scale(1.08);
+            filter: drop-shadow(6px 10px 6px rgba(0,0,0,0.5));
+        }
+
+        .clon-vehiculo{
+            position: absolute;
+            z-index: 100;
+            transform: translate(-50% , -50%);
+            pointer-events:none;
+
+        }
+
+        .casilla-iluminada{
+            background-color: #ffff99 !important;
+            transition: background-color 0.1s;
+        }
+        
+       </style>
+    </head>
+    <body>
+    <h1>almacen de vehiculo </h1>
+   <div id="almacen">
+    <img id="camion"  src="imagenes/camion.jpg" alt="camion" draggable="true">
+    <img id="mototaxi"  src="imagenes/mototaxi.jpg" alt="mototaxi" draggable="true">
+    <img id="taxi" src="imagenes/taxi.jpg" alt="taxi" draggable="true">
+    <img id="volvo" src="imagenes/volvo.jpeg" alt="volvo" draggable="true">
+    <img id="camion2" src="imagenes/camion2.jpg" alt="camion2" draggable="true">
+   </div>
+    <br>
+    <h3>tablero</h3>
+      <table>
+        <tr>                 
+    <th></th> <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th>
+        </tr>
+        <tr><th>1</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>2</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>3</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>4</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>5</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>6</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>7</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>8</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>9</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th>10</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <br>
+      </table>
+   <script>
+    let vehiculoArrastrado = null;
+    let esNuevo = true; 
+
+   
+    document.addEventListener('dragstart', (e) => {
+        if (e.target.tagName === 'IMG') {
+            vehiculoArrastrado = e.target; 
+
+            if (e.target.closest('#almacen')) {
+                esNuevo = true; 
+            } else {
+                esNuevo = false; 
+            }
+
+            const rect = e.target.getBoundingClientRect();
+            e.dataTransfer.setData('offsetX', e.clientX - rect.left);
+            e.dataTransfer.setData('offsetY', e.clientY - rect.top);
+            
+           
+            document.querySelectorAll('table img').forEach(img => {
+                img.style.pointerEvents = 'none';
+            });
+        }
+    });
+
+  
+    document.addEventListener('dragend', () => {
+        document.querySelectorAll('table img').forEach(img => {
+            img.style.pointerEvents = 'auto';
+        });
+    });
+
+    const tablaTablero = document.querySelector('table');
+    
+    tablaTablero.addEventListener('dragover', (e) => {
+        e.preventDefault(); 
+    });
+
+    
+    tablaTablero.addEventListener('dragenter', (e) => {
+        const casilla = e.target.closest('td');
+        if (casilla) {
+            casilla.classList.add('casilla-iluminada');
+        }
+    });
+
+  
+    tablaTablero.addEventListener('dragleave', (e) => {
+        const casilla = e.target.closest('td');
+        if (casilla) {
+            casilla.classList.remove('casilla-iluminada');
+        }
+    });
+
+    
+    tablaTablero.addEventListener('drop', (e) => {
+        e.preventDefault();
+
+      
+        const casillaDondeCayo = e.target.closest('td');
+        if (casillaDondeCayo) {
+            casillaDondeCayo.classList.remove('casilla-iluminada');
+        }
+        
+        document.querySelectorAll('td').forEach(td => td.classList.remove('casilla-iluminada'));
+
+        if (vehiculoArrastrado) {
+            const rectTabla = tablaTablero.getBoundingClientRect();
+            
+            const offsetX = parseFloat(e.dataTransfer.getData('offsetX')) || 0;
+            const offsetY = parseFloat(e.dataTransfer.getData('offsetY')) || 0;
+
+            const x = e.clientX - rectTabla.left - offsetX;
+            const y = e.clientY - rectTabla.top - offsetY;
+
+            if (esNuevo) {
+                const vehiculoClonado = vehiculoArrastrado.cloneNode(true);
+                vehiculoClonado.id = vehiculoArrastrado.id + '-' + Date.now();
+
+                vehiculoClonado.style.position = 'absolute';
+                vehiculoClonado.style.width = '65px';
+                vehiculoClonado.style.height = 'auto';
+                vehiculoClonado.style.zIndex = '10';
+
+                vehiculoClonado.style.left = x + 'px';
+                vehiculoClonado.style.top = y + 'px';
+
+                tablaTablero.appendChild(vehiculoClonado);
+            } else {
+                vehiculoArrastrado.style.left = x + 'px';
+                vehiculoArrastrado.style.top = y + 'px';
+            }
+        }
+    });
+</script>
